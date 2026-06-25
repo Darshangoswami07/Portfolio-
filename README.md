@@ -1,27 +1,30 @@
 # 🚀 Darshan Giri Goswami – Full Stack MERN Developer Portfolio
 
-A modern, responsive, and interactive developer portfolio built with **Next.js 15**, **TypeScript**, and **Tailwind CSS**. The portfolio showcases my professional experience, technical skills, projects, resume, and provides an AI-powered assistant along with appointment scheduling for recruiters and clients.
+A modern, responsive, and interactive developer portfolio built with **Next.js 15**, **React 19**, **TypeScript**, and **Tailwind CSS**. This portfolio showcases my professional experience, technical skills, featured projects, resume, AI-powered assistant, and appointment scheduling system for recruiters and clients.
 
----
 ## 🌐 Live Portfolio
 
-https://portfolio-rouge-ten-ric6b2uei5.vercel.app
+🔗 **https://portfolio-rouge-ten-ric6b2uei5.vercel.app**
+<img width="1872" height="1026" alt="image" src="https://github.com/user-attachments/assets/775934c0-4109-4a82-ab5c-f7fbc0da83c0" />
+
+<img width="1821" height="935" alt="image" src="https://github.com/user-attachments/assets/d8a0ea22-6838-48b0-afed-0b694cade773" />
 
 ---
 
-## ✨ Features
+## ✨ Features<img width="1872" height="1026" alt="image" src="https://github.com/user-attachments/assets/a2a23fa9-c27a-4086-9ce3-7feb8f02616e" />
 
-* Modern and responsive UI
-* Beautiful animations with Framer Motion
-* Hero, About, Experience, Skills and Projects sections
-* Resume download
-* AI Assistant to answer visitor questions
-* Appointment scheduling section
-* Contact form
-* Mobile-friendly design
-* SEO-friendly Next.js application
-* Built using reusable React components
-* Type-safe codebase using TypeScript
+
+* 🎨 Modern and responsive UI
+* ⚡ Smooth animations with Framer Motion
+* 👨‍💻 Hero, About, Experience, Skills & Projects sections
+* 📄 Resume download
+* 🤖 AI-powered assistant to answer visitor questions
+* 📅 Appointment scheduling system
+* 📩 Contact form
+* 📱 Fully responsive across all devices
+* 🚀 SEO-optimized Next.js application
+* ♻️ Reusable React components
+* 🛡️ Type-safe development with TypeScript
 
 ---
 
@@ -34,8 +37,9 @@ https://portfolio-rouge-ten-ric6b2uei5.vercel.app
 * TypeScript
 * Tailwind CSS
 * Framer Motion
+* Shadcn/UI
 
-### Backend / Services
+### Backend & Services
 
 * Prisma ORM
 * Nodemailer
@@ -46,12 +50,12 @@ https://portfolio-rouge-ten-ric6b2uei5.vercel.app
 * Anthropic Claude
 * Groq API
 
-### Validation & Forms
+### Forms & Validation
 
 * React Hook Form
 * Zod
 
-### Other Libraries
+### Additional Libraries
 
 * Lucide React
 * React Markdown
@@ -62,7 +66,7 @@ https://portfolio-rouge-ten-ric6b2uei5.vercel.app
 
 ## 📂 Main Sections
 
-* Hero
+* Home
 * About
 * Experience
 * Skills
@@ -74,37 +78,47 @@ https://portfolio-rouge-ten-ric6b2uei5.vercel.app
 
 ---
 
-## ⚙️ Installation
+## ⚙️ Getting Started
+
+### Clone the Repository
 
 ```bash
 git clone https://github.com/Darshangoswami07/Portfolio-.git
-
 cd Portfolio-
+```
 
+### Install Dependencies
+
+```bash
 npm install
+```
 
+### Start Development Server
+
+```bash
 npm run dev
 ```
 
 Open:
 
+```text
 http://localhost:3000
+```
 
 ---
 
-## 📦 Build
+## 📦 Production Build
 
 ```bash
 npm run build
-
 npm start
 ```
 
 ---
 
-## 📁 Folder Structure
+## 📁 Project Structure
 
-```
+```text
 app/
 components/
 lib/
@@ -116,21 +130,31 @@ public/
 
 ## 🚀 Deployment
 
-This project is optimized for deployment on **Vercel**.
+This project is fully optimized for deployment on **Vercel**.
+
+Deploy in just a few steps:
+
+1. Push the project to GitHub.
+2. Import the repository into Vercel.
+3. Configure any required environment variables (if using AI APIs, email, or Twilio).
+4. Click **Deploy**.
 
 ---
 
 ## 👨‍💻 Author
 
-Darshan Giri Goswami
+**Darshan Giri Goswami**
 
-Full Stack MERN Developer
+**Full Stack MERN Developer**
 
-GitHub:
-https://github.com/Darshangoswami07
+📧 Email: [darshangirigoswami07@gmail.com](mailto:darshangirigoswami07@gmail.com)
 
-LinkedIn:
-https://www.linkedin.com/in/darshan-goswami-b09137222/
+💼 LinkedIn: https://www.linkedin.com/in/darshan-goswami-b09137222/
 
-Email:
-[darshangirigoswami07@gmail.com](mailto:darshangirigoswami07@gmail.com)
+💻 GitHub: https://github.com/Darshangoswami07
+
+🌐 Portfolio: https://portfolio-rouge-ten-ric6b2uei5.vercel.app
+
+---
+
+⭐ If you found this project interesting, consider giving it a **Star** on GitHub.
