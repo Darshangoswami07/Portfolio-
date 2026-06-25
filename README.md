@@ -3,10 +3,9 @@
 A modern, responsive, and interactive developer portfolio built with **Next.js 15**, **TypeScript**, and **Tailwind CSS**. The portfolio showcases my professional experience, technical skills, projects, resume, and provides an AI-powered assistant along with appointment scheduling for recruiters and clients.
 
 ---
+## 🌐 Live Portfolio
 
-## 🌐 Live Demo
-
-**Portfolio:** portfolio-rouge-ten-ric6b2uei5.vercel.app
+https://portfolio-rouge-ten-ric6b2uei5.vercel.app
 
 ---
 
