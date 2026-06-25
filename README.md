@@ -5,9 +5,9 @@ A modern, responsive, and interactive developer portfolio built with **Next.js 1
 ## 🌐 Live Portfolio
 
 🔗 **https://portfolio-rouge-ten-ric6b2uei5.vercel.app**
-<img width="1872" height="1026" alt="image" src="https://github.com/user-attachments/assets/775934c0-4109-4a82-ab5c-f7fbc0da83c0" />
 
-<img width="1821" height="935" alt="image" src="https://github.com/user-attachments/assets/d8a0ea22-6838-48b0-afed-0b694cade773" />
+
+
 
 ---
 
