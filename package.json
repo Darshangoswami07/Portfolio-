@@ -1,0 +1,52 @@
+{
+  "name": "test",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^3.0.70",
+    "@anthropic-ai/sdk": "^0.104.1",
+    "@google/generative-ai": "^0.13.0",
+    "@hookform/resolvers": "^5.4.0",
+    "@prisma/client": "^5.22.0",
+    "ai": "^6.0.202",
+    "date-fns": "^4.4.0",
+    "duck-duck-scrape": "^2.2.7",
+    "framer-motion": "^12.23.12",
+    "groq-sdk": "^0.3.2",
+    "highlight.js": "^11.11.1",
+    "lucide-react": "^0.539.0",
+    "motion": "^12.23.22",
+    "next": "15.5.9",
+    "nodemailer": "^8.0.11",
+    "openai": "^4.52.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-hook-form": "^7.78.0",
+    "react-markdown": "^10.1.0",
+    "rehype-highlight": "^7.0.2",
+    "remark-gfm": "^4.0.1",
+    "sharp": "^0.34.3",
+    "twilio": "^6.0.2",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/nodemailer": "^8.0.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.6",
+    "prisma": "^5.22.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

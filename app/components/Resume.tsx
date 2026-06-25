@@ -1,0 +1,101 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { Download, FileText, ExternalLink } from 'lucide-react';
+
+export default function Resume() {
+  const resumePath = '/resume/Darshan_Giri_Goswami_CV.pdf';
+
+  const handleDownload = () => {
+    const link = document.createElement('a');
+    link.href = resumePath;
+    link.download = 'Darshan_Giri_Goswami_CV.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  return (
+    <section id="resume" className="py-20 bg-orange-50 dark:bg-stone-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            Resume
+          </h2>
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Download or view my resume to learn more about my experience and qualifications
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="max-w-4xl mx-auto"
+        >
+          {/* Resume Actions */}
+          <div className="bg-amber-50 dark:bg-stone-800 rounded-xl p-8 mb-8">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <div className="text-center sm:text-left">
+                <div className="flex items-center justify-center sm:justify-start mb-3">
+                  <FileText className="w-8 h-8 text-orange-500 dark:text-amber-400 mr-3" />
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Darshan Giri Goswami - CV
+                  </h3>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Full Stack MERN Developer - React.js, Node.js, Express.js, MongoDB
+                </p>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+<button
+                  onClick={handleDownload}
+                  className="flex items-center justify-center px-6 py-3 border-2 border-orange-500 text-orange-500 dark:border-amber-400 dark:text-amber-400 rounded-lg font-semibold hover:bg-orange-500 hover:text-white dark:hover:bg-amber-400 dark:hover:text-white transition-all duration-200 transform hover:scale-105"
+                >
+                  <Download className="w-5 h-5 mr-2" />
+                  Download PDF
+                </button>
+                
+                <a
+                  href={resumePath}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center px-6 py-3 bg-stone-700 text-white rounded-lg font-semibold hover:bg-stone-600 transition-all duration-200 transform hover:scale-105"
+                >
+                  <ExternalLink className="w-5 h-5 mr-2" />
+                  Open in New Tab
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Resume Viewer */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white dark:bg-stone-800 rounded-xl shadow-lg overflow-hidden"
+          >
+            <div className="relative w-full h-screen">
+              <iframe
+                src={resumePath}
+                className="w-full h-full border-0"
+                title="Resume Preview"
+              />
+            </div>
+          </motion.div>
+
+          
+        </motion.div>
+      </div>
+    </section>
+  );
+}

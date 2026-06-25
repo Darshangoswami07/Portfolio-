@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fffbeb;
+  --foreground: #171717;
+}
+
+@keyframes aurora {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.aurora-bg {
+  background: linear-gradient(-45deg, #fff7ed, #fffbeb, #fef3c7, #fef9c3, #fff7ed);
+  background-size: 300% 300%;
+  animation: aurora 12s ease infinite;
+}
+
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+.project-card .spotlight {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(249, 115, 22, 0.13), transparent 70%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.project-card:hover .spotlight {
+  opacity: 1;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+
+  .aurora-bg {
+    background: linear-gradient(-45deg, #1c1008, #1f1505, #120c02, #1a1005, #1c1008);
+    background-size: 300% 300%;
+    animation: aurora 12s ease infinite;
+  }
+}
+
+html, body { overflow-x: hidden; /* prevent horizontal scroll on mobile */ }
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Typing indicator dots */
+@keyframes blink-dot {
+  0% { opacity: 0.25; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+  100% { opacity: 0.25; transform: translateY(0); }
+}
+
+.typing-indicator { display: inline-flex; gap: 6px; align-items: center; }
+.typing-indicator .dot { width: 7px; height: 7px; border-radius: 9999px; opacity: 0.25; }
+.typing-indicator .dot:nth-child(1) { animation: blink-dot 0.9s infinite; animation-delay: 0s; }
+.typing-indicator .dot:nth-child(2) { animation: blink-dot 0.9s infinite; animation-delay: 0.12s; }
+.typing-indicator .dot:nth-child(3) { animation: blink-dot 0.9s infinite; animation-delay: 0.24s; }
+
+.avatar-gradient {
+  background: linear-gradient(135deg, #7c3aed, #06b6d4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Theme classes for manual toggle */
+.theme-dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+.theme-light {
+  --background: #fffbeb;
+  --foreground: #171717;
+}
