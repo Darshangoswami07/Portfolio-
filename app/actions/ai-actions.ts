@@ -1,14 +1,12 @@
 "use server";
 
-import { prisma, isPrismaEnabled } from '@/lib/prisma';
+import { prisma, isPrismaEnabled, isMockDbEnabled } from '@/lib/prisma';
 import { AIMode, Message, UserConversation, AIProvider } from '@prisma/client';
 import * as mockDb from '@/lib/ai/mockDb';
 
 export async function getConversations() {
-  // If no database URL is configured, use the in-memory mock DB to avoid
-  // noisy authentication errors during local development.
   if (!isPrismaEnabled()) {
-    return mockDb.getConversations();
+    return isMockDbEnabled() ? mockDb.getConversations() : [];
   }
 
   try {
@@ -17,14 +15,14 @@ export async function getConversations() {
       include: { messages: true }
     });
   } catch (error) {
-    console.warn('Prisma unavailable, falling back to mock DB for getConversations:', (error as any)?.message || error);
-    return mockDb.getConversations();
+    console.warn('Unable to load conversations from Prisma:', error);
+    return isMockDbEnabled() ? mockDb.getConversations() : [];
   }
 }
 
 export async function getConversation(id: string) {
   if (!isPrismaEnabled()) {
-    return mockDb.getConversation(id);
+    return isMockDbEnabled() ? mockDb.getConversation(id) : null;
   }
 
   try {
@@ -33,14 +31,18 @@ export async function getConversation(id: string) {
       include: { messages: true }
     });
   } catch (error) {
-    console.warn('Prisma unavailable, falling back to mock DB for getConversation:', (error as any)?.message || error);
-    return mockDb.getConversation(id);
+    console.warn('Unable to load conversation from Prisma:', error);
+    return isMockDbEnabled() ? mockDb.getConversation(id) : null;
   }
 }
 
 export async function createConversation(mode: AIMode = AIMode.GENERAL) {
   if (!isPrismaEnabled()) {
-    return mockDb.createConversation(mode);
+    if (isMockDbEnabled()) {
+      return mockDb.createConversation(mode);
+    }
+
+    throw new Error('Database is not configured. Cannot create conversation.');
   }
 
   try {
@@ -50,14 +52,22 @@ export async function createConversation(mode: AIMode = AIMode.GENERAL) {
       }
     });
   } catch (error) {
-    console.warn('Prisma unavailable, falling back to mock DB for createConversation:', (error as any)?.message || error);
-    return mockDb.createConversation(mode);
+    console.warn('Unable to create conversation in Prisma:', error);
+    if (isMockDbEnabled()) {
+      return mockDb.createConversation(mode);
+    }
+
+    throw error;
   }
 }
 
 export async function updateConversationTitleAction(id: string, title: string) {
   if (!isPrismaEnabled()) {
-    return mockDb.updateConversationTitle(id, title);
+    if (isMockDbEnabled()) {
+      return mockDb.updateConversationTitle(id, title);
+    }
+
+    throw new Error('Database is not configured. Cannot update conversation.');
   }
 
   try {
@@ -66,15 +76,23 @@ export async function updateConversationTitleAction(id: string, title: string) {
       data: { title }
     });
   } catch (error) {
-    console.warn('Prisma unavailable, falling back to mock DB for updateConversationTitleAction:', (error as any)?.message || error);
-    return mockDb.updateConversationTitle(id, title);
+    console.warn('Unable to update conversation title in Prisma:', error);
+    if (isMockDbEnabled()) {
+      return mockDb.updateConversationTitle(id, title);
+    }
+
+    throw error;
   }
 }
 
 export async function deleteConversationAction(id: string) {
   if (!isPrismaEnabled()) {
-    await mockDb.deleteMessagesByConversation(id);
-    return mockDb.deleteConversation(id);
+    if (isMockDbEnabled()) {
+      await mockDb.deleteMessagesByConversation(id);
+      return mockDb.deleteConversation(id);
+    }
+
+    throw new Error('Database is not configured. Cannot delete conversation.');
   }
 
   try {
@@ -86,9 +104,13 @@ export async function deleteConversationAction(id: string) {
       where: { id }
     });
   } catch (error) {
-    console.warn('Prisma unavailable, falling back to mock DB for deleteConversationAction:', (error as any)?.message || error);
-    await mockDb.deleteMessagesByConversation(id);
-    return mockDb.deleteConversation(id);
+    console.warn('Unable to delete conversation in Prisma:', error);
+    if (isMockDbEnabled()) {
+      await mockDb.deleteMessagesByConversation(id);
+      return mockDb.deleteConversation(id);
+    }
+
+    throw error;
   }
 }
 
@@ -101,19 +123,17 @@ export async function getAIUsageStats(): Promise<{ totalChats: number; totalMess
     const totalChats = await prisma.userConversation.count();
     const totalMessages = await prisma.message.count();
 
-    // Aggregate by mode
-    const messagesByMode = await prisma.message.groupBy({
-      by: ['aiMode'],
-      _count: true,
-    }) as Array<{ aiMode: AIMode; _count: number }>;
+    const modeStats = await Promise.all(
+      Object.values(AIMode).map(async (mode) => ({
+        mode,
+        count: await prisma.message.count({ where: { aiMode: mode } }),
+      }))
+    );
 
     return {
       totalChats,
       totalMessages,
-      modeStats: messagesByMode.map((stat) => ({
-        mode: stat.aiMode,
-        count: stat._count
-      }))
+      modeStats: modeStats.filter((stat) => stat.count > 0)
     };
   } catch (error) {
     // Suppress detailed DB errors during build/dev when credentials may be missing

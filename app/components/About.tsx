@@ -39,7 +39,7 @@ export default function About() {
             <div className="relative">
               <div className="aspect-square bg-orange-500 rounded-2xl overflow-hidden">
                 <Image
-                  src="/images/darshan-professional-image.png"
+                  src="/images/darshan-1.jpg"
                   alt="Darshan Giri Goswami"
                   fill
                   className="object-cover"

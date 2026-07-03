@@ -6,6 +6,64 @@ import { GoogleProvider } from './googleProvider';
 import { GroqProvider } from './groqProvider';
 import { OpenRouterProvider } from './openrouterProvider';
 
+type ProviderEnvConfig = {
+  provider: AIProviderEnum;
+  apiKey: string | undefined;
+  config: Omit<AIProviderConfig, 'apiKey'>;
+};
+
+const PROVIDER_ENV: ProviderEnvConfig[] = [
+  {
+    provider: AIProviderEnum.OPENAI,
+    apiKey: process.env.OPENAI_API_KEY,
+    config: {
+      organization: process.env.OPENAI_ORG_ID,
+    },
+  },
+  {
+    provider: AIProviderEnum.GOOGLE,
+    apiKey: process.env.GOOGLE_API_KEY,
+    config: {},
+  },
+  {
+    provider: AIProviderEnum.ANTHROPIC,
+    apiKey: process.env.ANTHROPIC_API_KEY,
+    config: {},
+  },
+  {
+    provider: AIProviderEnum.GROQ,
+    apiKey: process.env.GROQ_API_KEY,
+    config: {},
+  },
+  {
+    provider: AIProviderEnum.OPENROUTER,
+    apiKey: process.env.OPENROUTER_API_KEY,
+    config: {
+      baseURL: process.env.OPENROUTER_BASE_URL,
+    },
+  },
+];
+
+function normalizeProviderName(value: string | undefined): AIProviderEnum | null {
+  const normalized = value?.trim().toUpperCase();
+  if (!normalized) {
+    return null;
+  }
+
+  return Object.values(AIProviderEnum).includes(normalized as AIProviderEnum)
+    ? (normalized as AIProviderEnum)
+    : null;
+}
+
+function getConfiguredProvider(preferredProvider: AIProviderEnum | null): ProviderEnvConfig | null {
+  const preferred = PROVIDER_ENV.find((entry) => entry.provider === preferredProvider);
+  if (preferred?.apiKey?.trim()) {
+    return preferred;
+  }
+
+  return PROVIDER_ENV.find((entry) => Boolean(entry.apiKey?.trim())) ?? null;
+}
+
 export class AIProviderFactory {
   static createProvider(provider: AIProviderEnum, config: AIProviderConfig): AIProvider {
     switch (provider) {
@@ -25,36 +83,24 @@ export class AIProviderFactory {
   }
 
   static getProviderFromEnv(): AIProvider {
-    const providerName = process.env.AI_PROVIDER?.toLowerCase() as AIProviderEnum || AIProviderEnum.OPENAI;
+    const preferredProvider = normalizeProviderName(process.env.AI_PROVIDER);
+    const selectedProvider = getConfiguredProvider(preferredProvider);
 
-    let config: AIProviderConfig = {
-      apiKey: ''
-    };
-
-    switch (providerName) {
-      case AIProviderEnum.OPENAI:
-        config.apiKey = process.env.OPENAI_API_KEY || '';
-        config.organization = process.env.OPENAI_ORG_ID;
-        break;
-      case AIProviderEnum.ANTHROPIC:
-        config.apiKey = process.env.ANTHROPIC_API_KEY || '';
-        break;
-      case AIProviderEnum.GOOGLE:
-        config.apiKey = process.env.GOOGLE_API_KEY || '';
-        break;
-      case AIProviderEnum.GROQ:
-        config.apiKey = process.env.GROQ_API_KEY || '';
-        break;
-      case AIProviderEnum.OPENROUTER:
-        config.apiKey = process.env.OPENROUTER_API_KEY || '';
-        config.baseURL = process.env.OPENROUTER_BASE_URL;
-        break;
+    if (!selectedProvider) {
+      throw new Error(
+        'No AI provider API key is configured. Set one of OPENAI_API_KEY, GOOGLE_API_KEY, ANTHROPIC_API_KEY, GROQ_API_KEY, or OPENROUTER_API_KEY.'
+      );
     }
 
-    if (!config.apiKey) {
-      throw new Error(`API key not found for provider: ${providerName}`);
+    if (preferredProvider && selectedProvider.provider !== preferredProvider) {
+      console.warn(
+        `[AIProviderFactory] Preferred provider ${preferredProvider} has no API key. Falling back to ${selectedProvider.provider}.`
+      );
     }
 
-    return this.createProvider(providerName, config);
+    return this.createProvider(selectedProvider.provider, {
+      ...selectedProvider.config,
+      apiKey: selectedProvider.apiKey!.trim(),
+    });
   }
 }

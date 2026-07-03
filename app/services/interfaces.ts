@@ -4,13 +4,17 @@ export interface INotificationPayload {
   to: string;
   subject?: string;
   message: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface INotificationService {
   sendEmail(payload: INotificationPayload): Promise<boolean>;
   sendSms(payload: INotificationPayload): Promise<boolean>;
   sendWhatsApp(payload: INotificationPayload): Promise<boolean>;
+  notifyAll(
+    payload: INotificationPayload,
+    channels: ('email' | 'sms' | 'whatsapp')[]
+  ): Promise<Record<'email' | 'sms' | 'whatsapp', boolean | undefined>>;
 }
 
 export interface IEmailService {

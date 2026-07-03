@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, isPrismaEnabled } from '@/lib/prisma';
+import { prisma, isPrismaEnabled, isMockDbEnabled } from '@/lib/prisma';
 import * as mockDb from '@/lib/ai/mockDb';
 import { AIProviderFactory } from '@/lib/ai/providerFactory';
 import { AIMessage } from '@/lib/ai/types';
@@ -8,23 +8,45 @@ import { AIProvider, AIMode } from '@prisma/client';
 
 export const maxDuration = 60; // Allow longer execution time for AI endpoints
 
+function toPrismaAiProvider(providerName: string): AIProvider {
+  const normalized = providerName.toUpperCase();
+  return Object.values(AIProvider).includes(normalized as AIProvider)
+    ? (normalized as AIProvider)
+    : AIProvider.OPENAI;
+}
+
+function toPrismaAiMode(mode: string): AIMode {
+  const normalized = mode.toUpperCase();
+  return Object.values(AIMode).includes(normalized as AIMode)
+    ? (normalized as AIMode)
+    : AIMode.GENERAL;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { conversationId, content, webSearchEnabled, aiMode = 'GENERAL' } = await req.json();
+    const prismaAiMode = toPrismaAiMode(aiMode);
 
     if (!conversationId || !content) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    const mockDbEnabled = isMockDbEnabled();
+    if (!isPrismaEnabled() && !mockDbEnabled) {
+      return NextResponse.json(
+        { error: 'Database is not configured. Chat persistence is unavailable.' },
+        { status: 503 }
+      );
+    }
+
     let conversation: any = null;
-    if (!isPrismaEnabled()) {
+    if (mockDbEnabled) {
       conversation = await mockDb.getConversation(conversationId);
     } else {
       try {
         conversation = await prisma.userConversation.findUnique({ where: { id: conversationId } });
       } catch (err) {
-        // Prisma unavailable - try mock DB
-        conversation = await mockDb.getConversation(conversationId);
+        throw new Error(`Failed to load conversation from database: ${err instanceof Error ? err.message : String(err)}`);
       }
     }
 
@@ -32,8 +54,8 @@ export async function POST(req: NextRequest) {
       // On Vercel, server actions and route handlers can run in different
       // isolated instances. Recreate the selected conversation in this route
       // instance instead of failing the chat request.
-      if (!isPrismaEnabled()) {
-        conversation = await mockDb.createConversation(aiMode as any, conversationId);
+      if (mockDbEnabled) {
+        conversation = await mockDb.createConversation(prismaAiMode, conversationId);
       } else {
         try {
           await prisma.userConversation.create({
@@ -44,7 +66,7 @@ export async function POST(req: NextRequest) {
           });
           conversation = await prisma.userConversation.findUnique({ where: { id: conversationId } });
         } catch (err) {
-          conversation = await mockDb.createConversation(aiMode as any, conversationId);
+          throw new Error(`Failed to create conversation in database: ${err instanceof Error ? err.message : String(err)}`);
         }
       }
     }
@@ -54,8 +76,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Save user message immediately (DB or mock)
-    if (!isPrismaEnabled()) {
-      await mockDb.createMessage({ role: 'user', content, conversationId, aiMode: aiMode as any });
+    if (mockDbEnabled) {
+      await mockDb.createMessage({ role: 'user', content, conversationId, aiMode: prismaAiMode });
     } else {
       try {
         await prisma.message.create({
@@ -63,36 +85,35 @@ export async function POST(req: NextRequest) {
             role: 'user',
             content,
             conversationId,
-            aiMode,
+            aiMode: prismaAiMode,
           },
         });
       } catch (err) {
-        await mockDb.createMessage({ role: 'user', content, conversationId, aiMode: aiMode as any });
+        throw new Error(`Failed to save user message: ${err instanceof Error ? err.message : String(err)}`);
       }
     }
 
     // Update conversation timestamp
-    if (!isPrismaEnabled()) {
+    if (mockDbEnabled) {
       const c = await mockDb.getConversation(conversationId);
       if (c) c.updatedAt = new Date();
     } else {
       try {
         await prisma.userConversation.update({ where: { id: conversationId }, data: { updatedAt: new Date() } });
       } catch (err) {
-        const c = await mockDb.getConversation(conversationId);
-        if (c) c.updatedAt = new Date();
+        throw new Error(`Failed to update conversation timestamp: ${err instanceof Error ? err.message : String(err)}`);
       }
     }
 
     // Get previous messages
     let previousMessages: any[] = [];
-    if (!isPrismaEnabled()) {
+    if (mockDbEnabled) {
       previousMessages = await mockDb.findMessages(conversationId);
     } else {
       try {
         previousMessages = await prisma.message.findMany({ where: { conversationId }, orderBy: { createdAt: 'asc' }, take: 20 });
       } catch (err) {
-        previousMessages = await mockDb.findMessages(conversationId);
+        throw new Error(`Failed to load previous messages: ${err instanceof Error ? err.message : String(err)}`);
       }
     }
 
@@ -173,18 +194,26 @@ export async function POST(req: NextRequest) {
         // Save complete assistant message
         if (fullAssistantMessage) {
           try {
-            await prisma.message.create({
-              data: {
-                role: 'assistant',
-                content: fullAssistantMessage,
-                conversationId,
-                aiMode,
-                aiProvider: provider.getProviderName().toUpperCase() as AIProvider
-              }
-            });
+            if (mockDbEnabled) {
+              await mockDb.createMessage({ role: 'assistant', content: fullAssistantMessage, conversationId, aiMode: prismaAiMode, aiProvider: toPrismaAiProvider(provider.getProviderName()) });
+            } else {
+              await prisma.message.create({
+                data: {
+                  role: 'assistant',
+                  content: fullAssistantMessage,
+                  conversationId,
+                  aiMode: prismaAiMode,
+                  aiProvider: toPrismaAiProvider(provider.getProviderName())
+                }
+              });
+            }
 
             // Track usage for admin dashboard
             try {
+              if (mockDbEnabled) {
+                return;
+              }
+
               const today = new Date();
               today.setHours(0, 0, 0, 0); // Start of today
 
@@ -192,8 +221,8 @@ export async function POST(req: NextRequest) {
               const existingStat = await prisma.aIUsageStats.findFirst({
                 where: {
                   date: today,
-                  provider: provider.getProviderName().toUpperCase() as AIProvider,
-                  mode: aiMode as AIMode
+                  provider: toPrismaAiProvider(provider.getProviderName()),
+                  mode: prismaAiMode
                 }
               });
 
@@ -217,8 +246,8 @@ export async function POST(req: NextRequest) {
                 await prisma.aIUsageStats.create({
                   data: {
                     date: today,
-                    provider: provider.getProviderName().toUpperCase() as AIProvider,
-                    mode: aiMode as AIMode,
+                    provider: toPrismaAiProvider(provider.getProviderName()),
+                    mode: prismaAiMode,
                     totalRequests: 1,
                     totalTokens: 0, // To be implemented with actual token tracking
                     errorCount: 0
@@ -230,7 +259,7 @@ export async function POST(req: NextRequest) {
               // Don't fail the whole request if usage tracking fails
             }
           } catch (err) {
-            await mockDb.createMessage({ role: 'assistant', content: fullAssistantMessage, conversationId, aiMode: aiMode as any, aiProvider: provider.getProviderName().toUpperCase() as any });
+            console.error('Failed to save assistant message:', err);
           }
         }
       }

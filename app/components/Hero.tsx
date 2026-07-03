@@ -7,11 +7,11 @@ import Stack from './Stack'
 import { AiAssistant } from '@/app/components/ai-section/AiAssistant';
 
 const images = [
-  { id: 1, img: "/images/WhatsApp Image 2026-06-11 at 12.08.42 PM (1).jpeg" },
-  { id: 2, img: "/images/WhatsApp Image 2026-06-11 at 1.32.53 PM.jpeg" },
-  { id: 3, img: "/images/stack-pic-4.jpg" },
-  { id: 4, img: "/images/TrafficFSM.jpg" },
-  { id: 5, img: "/images/darshan-professional-image.png" },
+  { id: 1, img: "/images/darshan-1.jpg" },
+  { id: 2, img: "/images/darshan-2.jpg" },
+  { id: 3, img: "/images/darshan-3.jpg" },
+  { id: 4, img: "/images/darshan-4.jpg" },
+  { id: 5, img: "/images/stack-pic-4.jpg" },
   { id: 6, img: "/images/pick-my-1.jpeg" }
 ];
 
