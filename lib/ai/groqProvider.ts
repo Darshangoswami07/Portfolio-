@@ -73,8 +73,19 @@ export class GroqProvider extends BaseAIProvider {
         stream: true,
       });
 
-      let index = 0;
-      for await (const chunk of stream as any) {
+      interface GroqStreamChunk {
+        id?: string;
+        object?: string;
+        created?: number;
+        model?: string;
+        choices: {
+          index?: number;
+          delta?: { content?: string; role?: string };
+          finish_reason?: string | null;
+        }[];
+      }
+
+      for await (const chunk of stream as unknown as AsyncIterable<GroqStreamChunk>) {
         const choice = chunk.choices[0];
         yield {
           id: chunk.id || '',
@@ -90,7 +101,6 @@ export class GroqProvider extends BaseAIProvider {
             finish_reason: choice.finish_reason || null
           }]
         };
-        index++;
       }
     } catch (error) {
       this.handleError(error);

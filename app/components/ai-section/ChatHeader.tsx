@@ -21,7 +21,7 @@ export function ChatHeader({ selectedConversationId, onNewChat, onClose }: ChatH
       setIsDark(Boolean(initialDark));
       if (initialDark) document.documentElement.classList.add('theme-dark');
       else document.documentElement.classList.remove('theme-dark');
-    } catch (e) {
+    } catch {
       // ignore
     }
   }, []);
@@ -37,7 +37,7 @@ export function ChatHeader({ selectedConversationId, onNewChat, onClose }: ChatH
         document.documentElement.classList.remove('theme-dark');
         localStorage.setItem('site-theme', 'light');
       }
-    } catch (e) {
+    } catch {
       // ignore
     }
   }

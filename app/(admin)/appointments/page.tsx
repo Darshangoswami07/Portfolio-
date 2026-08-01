@@ -1,3 +1,8 @@
+export const metadata = {
+  title: 'Appointments | Admin',
+  description: 'Pending, confirmed, and historical appointments.',
+};
+
 export default function AppointmentsPage() {
   return (
     <div className="p-8">

@@ -1,3 +1,8 @@
+export const metadata = {
+  title: 'Analytics | Admin',
+  description: 'Meeting trends and collaboration request insights.',
+};
+
 export default function AnalyticsPage() {
   return (
     <div className="p-8">

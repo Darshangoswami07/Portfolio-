@@ -1,4 +1,4 @@
-import { AIMode, Message, UserConversation } from '@prisma/client';
+import { AIMode, AIProvider, Message, UserConversation } from '@prisma/client';
 
 type Conv = UserConversation & { messages: Message[] };
 
@@ -22,7 +22,7 @@ function createSeedConversations(): Conv[] {
           role: 'assistant',
           content: "Hi! This is a local demo chat. Ask me about the portfolio or say 'help' to get started.",
           aiMode: 'GENERAL' as AIMode,
-          aiProvider: 'OPENAI' as any,
+          aiProvider: 'OPENAI' as AIProvider,
           tokensUsed: 0,
           createdAt: new Date(),
         },
@@ -49,7 +49,7 @@ export async function getConversation(id: string): Promise<Conv | null> {
   return c ? JSON.parse(JSON.stringify(c)) : null;
 }
 
-export async function createConversation(mode: AIMode = 'GENERAL', id = `local-${Date.now()}`): Promise<Conv> {
+export async function createConversation(_mode: AIMode = 'GENERAL', id = `local-${Date.now()}`): Promise<Conv> {
   const conv: Conv = {
     id,
     title: 'New Chat',
@@ -84,10 +84,10 @@ export async function createMessage(data: Partial<Message> & { conversationId: s
   const message: Message = {
     id,
     conversationId: data.conversationId,
-    role: (data.role as any) || 'assistant',
+    role: data.role || 'assistant',
     content: data.content || '',
     aiMode: (data.aiMode as AIMode) || ('GENERAL' as AIMode),
-    aiProvider: (data.aiProvider as any) || ('OPENAI' as any),
+    aiProvider: (data.aiProvider as AIProvider) || ('OPENAI' as AIProvider),
     tokensUsed: (data.tokensUsed as number) || 0,
     createdAt: new Date(),
   };
@@ -110,7 +110,7 @@ export async function deleteMessagesByConversation(conversationId: string) {
   return count;
 }
 
-export default {
+const mockDb = {
   getConversations,
   getConversation,
   createConversation,
@@ -120,3 +120,5 @@ export default {
   findMessages,
   deleteMessagesByConversation,
 };
+
+export default mockDb;

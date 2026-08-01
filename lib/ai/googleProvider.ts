@@ -18,7 +18,11 @@ export class GoogleProvider extends BaseAIProvider {
       const model = genAI.getGenerativeModel({ model: options.model || 'gemini-1.5-pro' });
 
       // Convert messages to Google AI format
-      const chatHistory: any[] = [];
+      interface GoogleChatMessage {
+        role: 'user' | 'model';
+        parts: { text: string }[];
+      }
+      const chatHistory: GoogleChatMessage[] = [];
       let systemInstruction: string | undefined;
 
       for (const msg of messages) {
@@ -108,7 +112,11 @@ export class GoogleProvider extends BaseAIProvider {
       const model = genAI.getGenerativeModel({ model: options.model || 'gemini-1.5-pro' });
 
       // Convert messages to Google AI format
-      const chatHistory: any[] = [];
+      interface GoogleChatMessage {
+        role: 'user' | 'model';
+        parts: { text: string }[];
+      }
+      const chatHistory: GoogleChatMessage[] = [];
       let systemInstruction: string | undefined;
 
       for (const msg of messages) {

@@ -1,3 +1,8 @@
+export const metadata = {
+  title: 'Meetings | Admin',
+  description: 'Generated meeting links and provider status.',
+};
+
 export default function MeetingsPage() {
   return (
     <div className="p-8">

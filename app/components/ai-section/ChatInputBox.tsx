@@ -44,7 +44,7 @@ export function ChatInputBox({ onSendMessage, isLoading, textareaRef, placeholde
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  }, [inputValue]);
+  }, [inputValue, textareaRef]);
 
   // Focus textarea when it receives the ref
   useEffect(() => {

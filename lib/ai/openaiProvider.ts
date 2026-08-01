@@ -25,7 +25,7 @@ export class OpenAIProvider extends BaseAIProvider {
 
       const response = await openai.chat.completions.create({
         model: options.model || 'gpt-3.5-turbo',
-        messages: this.formatMessages(messages) as any,
+        messages: this.formatMessages(messages),
         temperature: options.temperature ?? 0.7,
         max_tokens: options.maxTokens,
         top_p: options.topP,
@@ -71,7 +71,7 @@ export class OpenAIProvider extends BaseAIProvider {
 
       const stream = await openai.chat.completions.create({
         model: options.model || 'gpt-3.5-turbo',
-        messages: this.formatMessages(messages) as any,
+        messages: this.formatMessages(messages),
         temperature: options.temperature ?? 0.7,
         max_tokens: options.maxTokens,
         top_p: options.topP,

@@ -4,7 +4,15 @@ import * as mockDb from '@/lib/ai/mockDb';
 import { AIProviderFactory } from '@/lib/ai/providerFactory';
 import { AIMessage } from '@/lib/ai/types';
 import { performWebSearch, formatSearchResultsForPrompt } from '@/lib/ai/tools/webSearch';
-import { AIProvider, AIMode } from '@prisma/client';
+import { AIProvider, AIMode, Message } from '@prisma/client';
+
+interface ChatProvider {
+  getProviderName(): string;
+  streamComplete(
+    messages: AIMessage[],
+    options: { temperature?: number; maxTokens?: number }
+  ): AsyncIterable<{ choices: { delta?: { content?: string } }[] }>;
+}
 
 export const maxDuration = 60; // Allow longer execution time for AI endpoints
 
@@ -39,7 +47,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let conversation: any = null;
+    let conversation: unknown = null;
     if (mockDbEnabled) {
       conversation = await mockDb.getConversation(conversationId);
     } else {
@@ -106,7 +114,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Get previous messages
-    let previousMessages: any[] = [];
+    let previousMessages: Message[] = [];
     if (mockDbEnabled) {
       previousMessages = await mockDb.findMessages(conversationId);
     } else {
@@ -139,10 +147,10 @@ export async function POST(req: NextRequest) {
     ];
 
     // Initialize provider (fall back to a lightweight local provider when no API key is configured)
-    let provider: any = null;
+    let provider: ChatProvider;
     try {
       provider = AIProviderFactory.getProviderFromEnv();
-    } catch (err) {
+    } catch {
       console.warn('AI provider not configured, using local fallback provider for development.');
 
       // Local fallback provider that answers common portfolio questions
@@ -150,7 +158,7 @@ export async function POST(req: NextRequest) {
         getProviderName() {
           return 'local';
         },
-        async *streamComplete(messages: any[], _opts: any) {
+        async *streamComplete(messages) {
           const userMsg = messages[messages.length - 1]?.content || '';
           const reply = getLocalFallbackReply(userMsg, aiMode);
           // Simple streaming: emit small chunks
@@ -185,7 +193,7 @@ export async function POST(req: NextRequest) {
             await writer.write(encoder.encode(delta));
           }
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error('Streaming error:', error);
         await writer.write(encoder.encode('\n\n**Error:** An issue occurred while generating the response.'));
       } finally {
@@ -271,9 +279,10 @@ export async function POST(req: NextRequest) {
         'Transfer-Encoding': 'chunked',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Chat API Error:', error);
-    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Internal server error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 

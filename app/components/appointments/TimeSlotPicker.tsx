@@ -29,8 +29,8 @@ const timeSlots = [
 export default function TimeSlotPicker({ selectedTime, onSelectTime }: TimeSlotPickerProps) {
   return (
     <div>
-      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Select Time</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">Select Time</h3>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
         {timeSlots.map((time, index) => {
           const isSelected = selectedTime === time;
           return (
@@ -40,11 +40,13 @@ export default function TimeSlotPicker({ selectedTime, onSelectTime }: TimeSlotP
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.96 }}
               onClick={() => onSelectTime(time)}
-              className={`py-3 px-4 rounded-xl text-sm font-medium transition-all duration-200 border-2 ${
+              className={`py-2.5 px-3 rounded-xl text-sm font-medium transition-all duration-200 border ${
                 isSelected
-                  ? 'border-orange-500 bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400'
-                  : 'border-gray-200 text-gray-600 hover:border-orange-300 dark:border-stone-700 dark:text-gray-300 dark:hover:border-orange-500/50'
+                  ? 'border-orange-500 bg-orange-500/10 text-orange-600 dark:text-orange-400'
+                  : 'border-zinc-900/10 dark:border-white/10 text-zinc-600 dark:text-zinc-300 bg-surface-muted hover:border-orange-300 dark:hover:border-orange-500/50'
               }`}
             >
               {time}

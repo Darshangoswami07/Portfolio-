@@ -83,9 +83,16 @@ export class AnthropicProvider extends BaseAIProvider {
         stream: true,
       });
 
+      interface AnthropicStreamChunk {
+        type: string;
+        id?: string;
+        model?: string;
+        delta?: { type: string; text?: string };
+      }
+
       let index = 0;
-      for await (const chunk of stream as any) {
-        if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text') {
+      for await (const chunk of stream as AsyncIterable<AnthropicStreamChunk>) {
+        if (chunk.type === 'content_block_delta' && chunk.delta?.type === 'text') {
           yield {
             id: chunk.id || `chunk-${index++}`,
             object: 'chat.completion.chunk',

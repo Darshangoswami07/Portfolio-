@@ -6,7 +6,6 @@ import { useConversation } from '@/lib/ai/conversationHook';
 import { ChatHeader } from './ChatHeader';
 import { ChatMessages } from './ChatMessages';
 import { ChatInputBox } from './ChatInputBox';
-import { Message } from '@prisma/client';
 
 export function AiAssistant({ isOpen, anchorRef, onClose }: { isOpen: boolean, anchorRef?: React.RefObject<HTMLElement | null>, onClose?: () => void }) {
   const {
@@ -95,7 +94,7 @@ export function AiAssistant({ isOpen, anchorRef, onClose }: { isOpen: boolean, a
         setTopOffset(Math.round(top));
         setMaxHeight(`${targetHeight}px`);
       }
-    } catch (err) {
+    } catch {
       // ignore
     }
   }, [isOpen, anchorRef]);
@@ -140,9 +139,9 @@ export function AiAssistant({ isOpen, anchorRef, onClose }: { isOpen: boolean, a
         >
           <div ref={chatContainerRef} className="relative">
             {/* Glassmorphism container */}
-            <div className="flex flex-col bg-white/20 dark:bg-slate-900/20 backdrop-blur-lg
-                           border border-white/20 dark:border-slate-800/20
-                           shadow-lg rounded-2xl"
+            <div className="flex flex-col bg-white/60 dark:bg-zinc-900/60 backdrop-blur-2xl
+                           border border-zinc-900/10 dark:border-white/10
+                           shadow-2xl rounded-2xl overflow-hidden"
                  style={{ height: maxHeight, maxHeight, overflowY: 'auto' }}>
               <ChatHeader
                 selectedConversationId={selectedConversationId}

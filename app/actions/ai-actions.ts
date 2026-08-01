@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma, isPrismaEnabled, isMockDbEnabled } from '@/lib/prisma';
-import { AIMode, Message, UserConversation, AIProvider } from '@prisma/client';
+import { AIMode } from '@prisma/client';
 import * as mockDb from '@/lib/ai/mockDb';
 
 export async function getConversations() {
@@ -135,7 +135,7 @@ export async function getAIUsageStats(): Promise<{ totalChats: number; totalMess
       totalMessages,
       modeStats: modeStats.filter((stat) => stat.count > 0)
     };
-  } catch (error) {
+  } catch {
     // Suppress detailed DB errors during build/dev when credentials may be missing
     console.warn('Skipping AI usage stats: database unavailable');
     return { totalChats: 0, totalMessages: 0, modeStats: [] };

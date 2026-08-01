@@ -10,7 +10,7 @@ export abstract class BaseAIProvider implements AIProvider {
   abstract getSupportedModels(): string[];
 
   // Helper method to format messages for different providers
-  protected formatMessages(messages: AIMessage[]): any {
+  protected formatMessages(messages: AIMessage[]): Pick<AIMessage, 'role' | 'content'>[] {
     // Base implementation - providers can override if needed
     return messages.map(msg => ({
       role: msg.role,
@@ -19,8 +19,9 @@ export abstract class BaseAIProvider implements AIProvider {
   }
 
   // Helper method to handle errors
-  protected handleError(error: any): never {
+  protected handleError(error: unknown): never {
     console.error(`AI Provider Error (${this.getProviderName()}):`, error);
-    throw new Error(`AI service unavailable: ${error.message || 'Unknown error'}`);
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    throw new Error(`AI service unavailable: ${message}`);
   }
 }

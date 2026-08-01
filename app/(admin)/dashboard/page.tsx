@@ -1,3 +1,8 @@
+export const metadata = {
+  title: 'Dashboard | Admin',
+  description: 'Key metrics and recent activity overview.',
+};
+
 export default function DashboardPage() {
   return (
     <div className="p-8">

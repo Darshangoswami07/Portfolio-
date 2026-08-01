@@ -1,8 +1,4 @@
-'use client';
-
-import dynamic from 'next/dynamic';
-
-const Hero = dynamic(() => import('./Hero'), { ssr: false });
+import Hero from './Hero';
 
 export default function HeroClientWrapper() {
   return <Hero />;

@@ -26,6 +26,7 @@ export function useConversation() {
   // Load conversations on mount
   useEffect(() => {
     loadConversations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Load messages when conversation selection changes
@@ -35,6 +36,7 @@ export function useConversation() {
     } else {
       setMessages([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedConversationId]);
 
   const loadConversations = useCallback(async () => {
@@ -225,7 +227,7 @@ export function useConversation() {
       // The optimistic update already reflects the latest assistant response.
       // Reloading could briefly clear the UI on a fresh deployment.
     }
-  }, [selectedConversationId, conversations, updateConversationTitle, loadMessages, error]);
+  }, [selectedConversationId, conversations, updateConversationTitle]);
 
   return {
     conversations,

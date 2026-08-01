@@ -9,6 +9,7 @@ A modern, responsive, and interactive developer portfolio built with **Next.js 1
 
 
 
+
 ---
 
 ## ✨ Features<img width="1872" height="1026" alt="image" src="https://github.com/user-attachments/assets/a2a23fa9-c27a-4086-9ce3-7feb8f02616e" />

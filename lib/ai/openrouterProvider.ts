@@ -108,7 +108,7 @@ export class OpenRouterProvider extends BaseAIProvider {
           if (done) break;
 
           buffer += decoder.decode(value, { stream: true });
-          let lines = buffer.split('\n');
+          const lines = buffer.split('\n');
           buffer = lines.pop() || '';
 
           for (const line of lines) {
@@ -147,7 +147,7 @@ export class OpenRouterProvider extends BaseAIProvider {
                     finish_reason: choice.finish_reason
                   }]
                 };
-              } catch (e) {
+              } catch {
                 // Skip invalid JSON lines
                 continue;
               }

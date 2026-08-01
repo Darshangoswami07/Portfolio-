@@ -1,3 +1,8 @@
+export const metadata = {
+  title: 'Settings | Admin',
+  description: 'Calendar, email, and SMS configuration.',
+};
+
 export default function SettingsPage() {
   return (
     <div className="p-8">

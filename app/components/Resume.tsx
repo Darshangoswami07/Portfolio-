@@ -2,9 +2,11 @@
 
 import { motion } from 'framer-motion';
 import { Download, FileText, ExternalLink } from 'lucide-react';
+import { useMouseGlow } from '../hooks/useMouseGlow';
 
 export default function Resume() {
   const resumePath = '/resume/Darshan_Giri_Goswami_CV.pdf';
+  const handleMouseMove = useMouseGlow();
 
   const handleDownload = () => {
     const link = document.createElement('a');
@@ -16,7 +18,7 @@ export default function Resume() {
   };
 
   return (
-    <section id="resume" className="py-20 bg-orange-50 dark:bg-stone-900">
+    <section id="resume" className="py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -25,10 +27,11 @@ export default function Resume() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <span className="pill-badge mb-4">Resume</span>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mb-4">
             Resume
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
             Download or view my resume to learn more about my experience and qualifications
           </p>
         </motion.div>
@@ -41,38 +44,52 @@ export default function Resume() {
           className="max-w-4xl mx-auto"
         >
           {/* Resume Actions */}
-          <div className="bg-amber-50 dark:bg-stone-800 rounded-xl p-8 mb-8">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <div
+            onMouseMove={handleMouseMove}
+            className="surface-card glow-border mouse-glow relative overflow-hidden p-8 mb-8"
+          >
+            <div className="glow-spot" />
+            <div className="relative z-[1] flex flex-col sm:flex-row items-center justify-center gap-6">
               <div className="text-center sm:text-left">
                 <div className="flex items-center justify-center sm:justify-start mb-3">
-                  <FileText className="w-8 h-8 text-orange-500 dark:text-amber-400 mr-3" />
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    Darshan Giri Goswami - CV
+                  <motion.div
+                    whileHover={{ rotate: 8, scale: 1.08 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                    className="p-2.5 rounded-xl bg-orange-500/10 mr-3"
+                  >
+                    <FileText className="w-6 h-6 text-orange-500 dark:text-amber-400" />
+                  </motion.div>
+                  <h3 className="text-xl font-semibold text-zinc-900 dark:text-white">
+                    Darshan Giri Goswami — CV
                   </h3>
                 </div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Full Stack MERN Developer - React.js, Node.js, Express.js, MongoDB
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                  Full Stack MERN Developer · React.js, Node.js, Express.js, MongoDB
                 </p>
               </div>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-<button
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <motion.button
                   onClick={handleDownload}
-                  className="flex items-center justify-center px-6 py-3 border-2 border-orange-500 text-orange-500 dark:border-amber-400 dark:text-amber-400 rounded-lg font-semibold hover:bg-orange-500 hover:text-white dark:hover:bg-amber-400 dark:hover:text-white transition-all duration-200 transform hover:scale-105"
+                  whileHover={{ scale: 1.03, y: -1 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="btn-gradient flex items-center justify-center px-6 py-3 text-white rounded-full font-semibold text-sm"
                 >
-                  <Download className="w-5 h-5 mr-2" />
+                  <Download className="w-4 h-4 mr-2" />
                   Download PDF
-                </button>
-                
-                <a
+                </motion.button>
+
+                <motion.a
                   href={resumePath}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center px-6 py-3 bg-stone-700 text-white rounded-lg font-semibold hover:bg-stone-600 transition-all duration-200 transform hover:scale-105"
+                  whileHover={{ scale: 1.03, y: -1 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="flex items-center justify-center px-6 py-3 rounded-full font-semibold text-sm border border-zinc-900/10 dark:border-white/15 text-zinc-800 dark:text-zinc-100 bg-white/60 dark:bg-white/5 hover:border-orange-400/60 hover:text-orange-600 dark:hover:text-amber-300 transition-colors duration-200"
                 >
-                  <ExternalLink className="w-5 h-5 mr-2" />
+                  <ExternalLink className="w-4 h-4 mr-2" />
                   Open in New Tab
-                </a>
+                </motion.a>
               </div>
             </div>
           </div>
@@ -82,7 +99,7 @@ export default function Resume() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="bg-white dark:bg-stone-800 rounded-xl shadow-lg overflow-hidden"
+            className="surface-card overflow-hidden"
           >
             <div className="relative w-full h-screen">
               <iframe
@@ -92,8 +109,6 @@ export default function Resume() {
               />
             </div>
           </motion.div>
-
-          
         </motion.div>
       </div>
     </section>
