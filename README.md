@@ -157,5 +157,6 @@ Deploy in just a few steps:
 🌐 Portfolio: https://portfolio-rouge-ten-ric6b2uei5.vercel.app
 
 ---
+made by- darshan
 
 ⭐ If you found this project interesting, consider giving it a **Star** on GitHub.
